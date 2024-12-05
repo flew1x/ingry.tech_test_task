@@ -16,8 +16,8 @@ jobs:
         with:
           go-version: "1.22"
       - name: Build
-        working-directory: test
+        working-directory: task
         run: go build ./...
       - name: Test
-        working-directory: test
+        working-directory: task
         run: go test -v ./...
