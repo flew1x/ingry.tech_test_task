@@ -26,6 +26,7 @@ func (h *Handler) InitRoutes() *echo.Echo {
 
 	ech.Use(middleware.Logger())
 	ech.Use(middleware.Recover())
+	ech.Use(ErrorHandler)
 
 	ech.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},

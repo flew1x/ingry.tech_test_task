@@ -1,2 +1,11 @@
 rest: 
   port: 8080
+
+postgres:
+  host: "postgres:5432"
+  user: "postgres"
+  dbname: "postgres"
+  sslmode: "disable"
+  max_cons: 25
+  max_idle_cons: 25
+  max_conn_lifetime: "1h"

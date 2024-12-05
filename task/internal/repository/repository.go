@@ -1,13 +1,15 @@
 package repository
 
-import "github.com/flew1x/ingry.tech_test_task/internal/database"
+import (
+	"gorm.io/gorm"
+)
 
 type Repository struct {
 	Book IBookRepository
 }
 
-func NewRepository(db database.MemoryDatabase) *Repository {
+func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
-		Book: NewBookRepository(db),
+		Book: NewPostgresBookRepository(db),
 	}
 }

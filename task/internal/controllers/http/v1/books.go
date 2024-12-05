@@ -19,10 +19,10 @@ func (h *Handler) getBooks(c echo.Context) error {
 	books, err := h.service.Book.GetAll()
 	if err != nil {
 		if errors.Is(err, service.ErrAllBooksNotFound) {
-			return c.JSON(http.StatusNotFound, err.Error())
+			return echo.NewHTTPError(http.StatusNotFound, err.Error())
 		}
 
-		return c.JSON(http.StatusInternalServerError, ErrInternalServerError)
+		return ErrInternalServerError
 	}
 
 	return c.JSON(http.StatusOK, getBooksResponse{Books: books})
@@ -35,16 +35,16 @@ type getBookByIDResponse struct {
 func (h *Handler) getBookByID(c echo.Context) error {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, ErrInvalidID)
+		return ErrInvalidID
 	}
 
 	book, err := h.service.Book.GetByID(id)
 	if err != nil {
 		if errors.Is(err, service.ErrBookNotFound) {
-			return c.JSON(http.StatusNotFound, err.Error())
+			return echo.NewHTTPError(http.StatusNotFound, err.Error())
 		}
 
-		return c.JSON(http.StatusInternalServerError, ErrInternalServerError)
+		return ErrInternalServerError
 	}
 
 	return c.JSON(http.StatusOK, getBookByIDResponse{
@@ -62,21 +62,25 @@ func (h *Handler) createBook(c echo.Context) error {
 	req := createBookRequest{}
 
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrInvalidRequest)
+		return ErrInvalidRequest
 	}
 
 	switch {
 	case req.Title == "":
-		return c.JSON(http.StatusBadRequest, ErrTitleShouldNotBeEmpty)
+		return ErrTitleShouldNotBeEmpty
 	case req.Author == "":
-		return c.JSON(http.StatusBadRequest, ErrAuthorShouldNotBeEmpty)
+		return ErrAuthorShouldNotBeEmpty
 	case req.Year == 0:
-		return c.JSON(http.StatusBadRequest, ErrYearShouldNotBeEmpty)
+		return ErrYearShouldNotBeEmpty
 	}
 
 	book, err := h.service.Book.Create(req.Title, req.Author, req.Year)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, ErrInternalServerError)
+		if errors.Is(err, service.ErrBookAlreadyExists) {
+			return echo.NewHTTPError(http.StatusConflict, err.Error())
+		}
+
+		return ErrInternalServerError
 	}
 
 	return c.JSON(http.StatusCreated, book)
@@ -91,22 +95,22 @@ type updateBookRequest struct {
 func (h *Handler) updateBook(c echo.Context) error {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, ErrInvalidID)
+		return ErrInvalidID
 	}
 
 	req := updateBookRequest{}
 
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrInvalidRequest)
+		return ErrInvalidRequest
 	}
 
 	switch {
 	case req.Title == "":
-		return c.JSON(http.StatusBadRequest, ErrTitleShouldNotBeEmpty)
+		return ErrTitleShouldNotBeEmpty
 	case req.Author == "":
-		return c.JSON(http.StatusBadRequest, ErrAuthorShouldNotBeEmpty)
+		return ErrAuthorShouldNotBeEmpty
 	case req.Year == 0:
-		return c.JSON(http.StatusBadRequest, ErrYearShouldNotBeEmpty)
+		return ErrYearShouldNotBeEmpty
 	}
 
 	book, err := h.service.Book.Update(entity.Book{
@@ -117,10 +121,10 @@ func (h *Handler) updateBook(c echo.Context) error {
 	})
 	if err != nil {
 		if errors.Is(err, service.ErrBookNotFound) {
-			return c.JSON(http.StatusNotFound, err.Error())
+			return echo.NewHTTPError(http.StatusNotFound, err.Error())
 		}
 
-		return c.JSON(http.StatusInternalServerError, ErrInternalServerError)
+		return ErrInternalServerError
 	}
 
 	return c.JSON(http.StatusOK, book)
@@ -129,16 +133,16 @@ func (h *Handler) updateBook(c echo.Context) error {
 func (h *Handler) deleteBook(c echo.Context) error {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, ErrInvalidID)
+		return ErrInvalidID
 	}
 
 	err = h.service.Book.Delete(id)
 	if err != nil {
 		if errors.Is(err, service.ErrBookNotFound) {
-			return c.JSON(http.StatusNotFound, err.Error())
+			return echo.NewHTTPError(http.StatusNotFound, err.Error())
 		}
 
-		return c.JSON(http.StatusInternalServerError, ErrInternalServerError)
+		return ErrInternalServerError
 	}
 
 	return c.NoContent(http.StatusNoContent)

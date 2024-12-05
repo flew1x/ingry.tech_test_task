@@ -20,9 +20,9 @@ type App struct {
 }
 
 func NewApp(config *config.Config) *App {
-	db := database.NewInMemoryDatabase[string, any]()
+	db := database.InitDatabase(config.PostgresConfig)
 
-	repo := repository.NewRepository(db)
+	repo := repository.NewRepository(db.DB)
 	serv := service.NewService(repo)
 
 	handler := v1.NewHandler(serv, config)

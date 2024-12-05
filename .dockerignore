@@ -1,3 +1,4 @@
 .bin
 configs
 logs
+postgres-data

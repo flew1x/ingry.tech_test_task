@@ -13,7 +13,8 @@ import (
 var cfg *koanf.Koanf
 
 type Config struct {
-	RestConfig IRESTConfig
+	RestConfig     IRESTConfig
+	PostgresConfig IPostgresConfig
 }
 
 func NewConfig() *Config {
@@ -40,6 +41,7 @@ func (c *Config) InitConfig(configPath, configFile string) error {
 	}
 
 	c.RestConfig = NewRestConfig()
+	c.PostgresConfig = NewPostgresConfig()
 
 	return nil
 }
