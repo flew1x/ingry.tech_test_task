@@ -1,0 +1,208 @@
+basePath: /api/v1
+definitions:
+  echo.HTTPError:
+    properties:
+      message: {}
+    type: object
+  github_com_flew1x_ingry_tech_test_task_internal_entity.Book:
+    properties:
+      author:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      year:
+        type: integer
+    type: object
+  internal_controllers_http_v1.createBookRequest:
+    properties:
+      author:
+        type: string
+      title:
+        type: string
+      year:
+        type: integer
+    type: object
+  internal_controllers_http_v1.getBookByIDResponse:
+    properties:
+      book:
+        $ref: '#/definitions/github_com_flew1x_ingry_tech_test_task_internal_entity.Book'
+    type: object
+  internal_controllers_http_v1.updateBookRequest:
+    properties:
+      author:
+        type: string
+      title:
+        type: string
+      year:
+        type: integer
+    type: object
+info:
+  contact:
+    email: kruezz@mail.ru
+    name: API Support
+  description: Swagger API for Test Task
+  termsOfService: http://swagger.io/terms/
+  title: Blueprint Swagger API
+  version: "1.0"
+paths:
+  /api/v1/books:
+    get:
+      description: Fetches the complete list of books and returns it in JSON format.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved list of books
+          schema:
+            items:
+              $ref: '#/definitions/github_com_flew1x_ingry_tech_test_task_internal_entity.Book'
+            type: array
+        "404":
+          description: Books not found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: 'Internal server error" {"error": "Internal server error"}'
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Retrieves a list of all books
+      tags:
+      - books
+    post:
+      consumes:
+      - application/json
+      description: Creates a new book with the provided title, author, and year.
+      parameters:
+      - description: Book properties
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controllers_http_v1.createBookRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the book
+          schema:
+            $ref: '#/definitions/github_com_flew1x_ingry_tech_test_task_internal_entity.Book'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "409":
+          description: Book already exists
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Creates a new book
+      tags:
+      - books
+  /api/v1/books/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a book based on the provided ID.
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Book successfully deleted
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "404":
+          description: Book not found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Deletes a book
+      tags:
+      - books
+    get:
+      description: Fetches a book based on the provided ID and returns it in JSON
+        format.
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the book
+          schema:
+            $ref: '#/definitions/internal_controllers_http_v1.getBookByIDResponse'
+        "400":
+          description: Invalid ID
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "404":
+          description: Book not found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Retrieves a book by its ID
+      tags:
+      - books
+    patch:
+      consumes:
+      - application/json
+      description: Updates an existing book with the provided title, author, and year.
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Book properties
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controllers_http_v1.updateBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the book
+          schema:
+            $ref: '#/definitions/github_com_flew1x_ingry_tech_test_task_internal_entity.Book'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "404":
+          description: Book not found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Updates an existing book
+      tags:
+      - books
+swagger: "2.0"

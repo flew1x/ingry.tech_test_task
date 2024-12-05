@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	_ "github.com/flew1x/ingry.tech_test_task/docs"
 	"github.com/flew1x/ingry.tech_test_task/internal/app"
 	"github.com/flew1x/ingry.tech_test_task/internal/config"
 
@@ -17,6 +18,15 @@ var (
 	ErrGracefulStop = errors.New("graceful stop signal received")
 )
 
+// @title Blueprint Swagger API
+// @version 1.0
+// @description Swagger API for Test Task
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.email kruezz@mail.ru
+
+// @BasePath /api/v1
 func main() {
 	cfg := config.NewConfig()
 	cfg.InitConfig(os.Getenv("CONFIG_PATH"), os.Getenv("CONFIG_FILE"))

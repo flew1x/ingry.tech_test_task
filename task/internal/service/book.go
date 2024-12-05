@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
+//go:generate go run github.com/vektra/mockery/v2@v2.40.2 --name IBookService
 type IBookService interface {
 	GetAll() ([]entity.Book, error)
 	GetByID(id uuid.UUID) (entity.Book, error)

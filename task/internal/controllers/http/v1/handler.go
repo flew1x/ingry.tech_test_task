@@ -7,6 +7,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 type Handler struct {
@@ -28,22 +29,20 @@ func (h *Handler) InitRoutes() *echo.Echo {
 	ech.Use(middleware.Recover())
 	ech.Use(ErrorHandler)
 
-	ech.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-	}))
+	ech.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
 
 	ech.GET("/health", h.health)
+	ech.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	api := ech.Group("/api/v1")
 	{
 		books := api.Group("/books")
 		{
-			books.GET("", h.getBooks)
-			books.GET("/:id", h.getBookByID)
-			books.POST("", h.createBook)
-			books.PUT("/:id", h.updateBook)
-			books.DELETE("/:id", h.deleteBook)
+			books.GET("", h.GetBooks)
+			books.GET("/:id", h.GetBookByID)
+			books.POST("", h.CreateBook)
+			books.PUT("/:id", h.UpdateBook)
+			books.DELETE("/:id", h.DeleteBook)
 		}
 	}
 
