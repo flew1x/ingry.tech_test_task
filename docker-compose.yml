@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  test:
+    image: test
+    container_name: test
+    build:
+      context: task
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configs:/app/configs
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
